@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.84.0">
+    <title>Contacts</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'assets/css/bootstrap.css' %}" rel="stylesheet">
+
+
+    <meta name="theme-color" content="#7952b3">
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+        
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <header>
+        <div class="navbar navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a href="/" class="navbar-brand d-flex align-items-center">
+                    <strong>Contacts</strong>
+                </a>
+            </div>
+        </div>
+    </header><br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-12" style="text-align: center;">
+                <h2>Add Contact</h2><br>
+                <p style="color: red;" id="error"></p>
+                <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">Name</span>
+                    <input type="text" class="form-control" placeholder="Name" id="name" aria-label="Username" aria-describedby="addon-wrapping">
+                </div><br>
+                <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">Email&nbsp;</span>
+                    <input type="email" class="form-control" placeholder="Email" id="email" aria-label="Username" aria-describedby="addon-wrapping">
+                </div>
+                <br>
+                <input type="submit" class="btn btn-primary" value="Save" id="save_contact">
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-12">
+                <h2>Contacts List</h2>
+                <form method="POST" action="/search-1/">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-9">
+                            <div class="input-group flex-nowrap">
+                                <span class="input-group-text" id="addon-wrapping">Name or Email</span>
+                                <input type="text" class="form-control" name="name" placeholder="Name or Email" aria-label="Username" aria-describedby="addon-wrapping">
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <p style="color: blue;" id="succ"></p>
+                {% if not exist %}
+                <p style="color: blue;">No record found!</p>
+                {% else %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table">
+                        {% for contact in contacts %}
+                        <tr id="tr-{{contact.id}}">
+                            <td>{{contact.name}}</td>
+                            <td>{{contact.email}}</td>
+                            <td>
+                                <button type="button" class="btn btn-warning" onclick="edit_contact(event, '{{contact.id}}')">Edit</button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="delete_contact(event, '{{contact.id}}')">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if more %}
+                <form action="/search-{{next}}/" method="POST">{% csrf_token %}
+                    <input type="hidden" name="name" value="{{name}}">
+                    <input type="submit" value="more" class="btn btn-primary">
+                </form>
+                {% endif %} {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="exampleModal" tabindex="-1">
+        <div class=" modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Contact</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: red;" id="editerror"></p>
+                    <div class="input-group flex-nowrap">
+                        <span class="input-group-text" id="addon-wrapping">Name</span>
+                        <input type="text" class="form-control" placeholder="Name" id="editname" aria-label="Username" aria-describedby="addon-wrapping">
+                    </div><br>
+                    <div class="input-group flex-nowrap">
+                        <span class="input-group-text" id="addon-wrapping">Email&nbsp;</span>
+                        <input type="email" class="form-control" placeholder="Email" id="editemail" aria-label="Username" aria-describedby="addon-wrapping">
+                    </div>
+                    <input type="hidden" id="hiddenid">
+                    <br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="editbutton">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'assets/js/pooper.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.js' %}"></script>
+    <script src="{% static 'assets/js/contact.js' %}"></script>
+
+
+</body>
+
+</html>
